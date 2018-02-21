@@ -34,7 +34,7 @@ def find_unsubmitted_jobs(jobs_dir):
 #'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
 
 #where jobs to submit are. NEEDS TO BE CHANGED EVERYTIME!
-jobs_dir = 'jobs/KOI-94/'
+jobs_dir = 'jobs/KOI-94_mas/'
 
 files = find_unsubmitted_jobs(jobs_dir)
 Njobs_counter = 0

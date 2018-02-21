@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 import mr_forecast as mr
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import math
 import sys
 import os
+import warnings
 
 #This function draws a distribution from the values listed in the planets.csv file from NASA's exoplanet archive and also returns whether it found anything
 def returnvalues(sample,parname,nsamples,ind=0):
@@ -31,7 +32,18 @@ def returnvalues(sample,parname,nsamples,ind=0):
 
 			#just return a list of the mean repeated
 			values=np.repeat(mean,nsamples)
-		
+
+			limitflag=sample[parname+"lim"][ind:ind+1].astype(np.int)
+			#print a warning
+			basewarning="No "+parname+" error information found for planet"+str(ind+1)+". The mean value is being repeated. "
+			if limitflag==0:
+				warnings.warn(basewarning+"The value does not appear to be a limit")
+			elif limitflag==1:
+				warnings.warn(basewarning+"The value appears to be a limit")
+			else:
+				warnings.warn(basewarning+"The value does not appear to be a limit, but an improperly accounted for special case inserted by the programmer modifying the orginal data file")
+			warnings.resetwarnings()
+			
 		#if an error is found
 		else:
 
@@ -45,6 +57,9 @@ def returnvalues(sample,parname,nsamples,ind=0):
 				#if the drawn value will cause a negative final value (or a value greater than 1 for eccentricities), throw it out
 				if parname=="pl_orbeccen":
 					while float(mean+rand[x]*err2)<0 or float(mean+rand[x]*err1)>1:
+						rand[x]=np.random.normal(0,1,1)
+				elif parname=="pl_ecos_omegabar" or parname=="pl_esin_omegabar":
+					while float(mean+rand[x]*err2)<-1 or float(mean+rand[x]*err1)>1:
 						rand[x]=np.random.normal(0,1,1)
 				else:
 					while float(mean+rand[x]*err2)<0:
@@ -95,9 +110,29 @@ def planetparameters(sample,index, nsamples):
 	return m, P, inc, w, MA
 
 #Draws eccentricities for those planets that dont have any
-def eccentricities(sample,index,nsamples,ms,p1,p0=np.zeros(2),p2=np.zeros(2),m0=np.zeros(2),m2=np.zeros(2)):
+def eccentricities(sample,index,nsamples,ms,p1,w,p0=np.zeros(2),p2=np.zeros(2),m0=np.zeros(2),m2=np.zeros(2)):
 
-	e, found=returnvalues(sample,"pl_orbeccen",nsamples,ind=index)
+	limitflag=sample["pl_orbeccenlim"][index:index+1].astype(np.int)
+	limitflagint=int(limitflag)
+
+	#if a no limit flag or a standard one is found, procede normally
+	if math.isnan(limitflag) or limitflagint<2:
+		e, found=returnvalues(sample,"pl_orbeccen",nsamples,ind=index)
+
+	#this should only happen for KOI-94_mas right now
+	elif limitflagint==2:
+
+		ecos, found=returnvalues(sample,"pl_ecos_omegabar",nsamples,ind=index)
+		esin, found=returnvalues(sample,"pl_esin_omegabar",nsamples,ind=index)
+
+		#use the values from the Masuda et al. paper to contruct new e and w distributions
+		e=np.sqrt(np.multiply(ecos,ecos)+np.multiply(esin,esin))
+		w=np.add(np.arctan2(esin,ecos),2*np.pi)%(2*np.pi)
+		found=True
+
+	#if a totally weird limit flag is found
+	else:
+		found=False
 	
 	if not found:
 
@@ -142,7 +177,7 @@ def eccentricities(sample,index,nsamples,ms,p1,p0=np.zeros(2),p2=np.zeros(2),m0=
 		#e[e<0]=0 #should be taken care of by while loop in return values
 		#e[e>1]=1 # keeps eccentricities less than 1 (should be properly corrected in returnvalues)
 
-	return e
+	return e, w
 
 #function that writes the job files
 def write_jobs(indices, system, jobs_dir, norbits, Np):
@@ -189,11 +224,10 @@ def collect_parameters(sample, n_sims):
 		m[i,:], P[i,:], inc[i,:], w[i,:], MA[i,:] = planetparameters(sample, i, n_sims)
 
 	#get all eccentricities (first and last have to be done separately as they dont fit the syntax pattern of planets that are surrounded by other planets)
-	e[0,:] = eccentricities(sample,0,n_sims,Ms,P[0,:],p2=P[1,:],m2=m[1,:])
-	e[Np-1,:] = eccentricities(sample,Np-1,n_sims,Ms,P[Np-1,:],p0=P[Np-2,:],m0=m[Np-2,:])
+	e[0,:], w[0,:] = eccentricities(sample,0,n_sims,Ms,P[0,:],w[0,:],p2=P[1,:],m2=m[1,:])
+	e[Np-1,:], w[Np-1,:] = eccentricities(sample,Np-1,n_sims,Ms,P[Np-1,:],w[Np-1,:],p0=P[Np-2,:],m0=m[Np-2,:])
 	for i in range(1,Np-1):
-		e[i,:] = eccentricities(sample,i,n_sims,Ms,P[i,:],p0=P[i-1,:],p2=P[i+1,:],m0=m[i-1,:],m2=m[i+1,:])
-
+		e[i,:], w[i,:] = eccentricities(sample,i,n_sims,Ms,P[i,:],w[i,:],p0=P[i-1,:],p2=P[i+1,:],m0=m[i-1,:],m2=m[i+1,:])
 	return Ms, m, P, inc, w, MA, e, Np
 
 #saves data to csv
@@ -237,12 +271,20 @@ def save_data(Ms, m, P, w, MA, e, Np, n_sims, dat_dir, system):
 	return indices
 
 #wrapper function to generate the job files
-def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute=0):
+def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute=0,plotstuff=0):
 
 	#create and save parameters and create job files for original system
 	Ms, m, P, inc, w, MA, e, Np = collect_parameters(sample, n_sims)
 	indices = save_data(Ms, m, P, w, MA, e, Np, n_sims, dat_dir, system)
 	out = write_jobs(indices, system, jobs_dir, norbits, Np)
+
+	if plotstuff:
+		#plotting
+		for i in range(sample.shape[0]):
+			plt.hist(e[i,:], bins='auto', facecolor='red', alpha=0.75)
+			fig = plt.gcf()
+			fig.savefig("%s planet %d eccentricities"%(samplename,i)+".png")   # save the figure to file
+			plt.close(fig)
 
 	#if you want to create jobs of all equivalent 3-planet systems
 	if permute:
@@ -267,7 +309,7 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 	return 1
 
 #reading in NASA exoplanets archive information for 4 planets as a panda array
-data = pd.read_csv('planets.csv', header=40)
+data = pd.read_csv('planets_mod.csv', header=40)
 
 if __name__ == '__main__': #do this if the file is called directly from the console (not by another function)
 
@@ -281,7 +323,7 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	#'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
 	
 	#system you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
-	samplename= "KOI-94"
+	samplename= "KOI-94_mas"
 
 	#finding and isolating the system data
 	sampleindex=np.where(data["pl_hostname"]==samplename)[0]
@@ -301,18 +343,14 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	norbits = 1e9
 	
 	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
-	permute=1
+	perm=1
+
+	#do you want to plot the distribution of eccentricities
+	plots=1
 
 	#generalize to multiple systems later?
 	# systems = [samplename]
 	# for system in systems:
 
 	#generate jobs for original system
-	out = generate_jobs(sample,samplename,dat_dir,jobs_dir,dir_path,samps,norbits,permute)
-
-	#plotting
-	# #histogram
-	# plt.hist(e[0,:], bins='auto', facecolor='red', alpha=0.75)
-	# fig = plt.gcf()
-	# fig.savefig('foo1.png')   # save the figure to file
-	# plt.close(fig)
+	out = generate_jobs(sample,samplename,dat_dir,jobs_dir,dir_path,samps,norbits,permute=perm,plotstuff=plots)

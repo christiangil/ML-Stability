@@ -4,7 +4,7 @@ import pandas as pd
 import make_4planet as m4
 
 #read planetary data
-data = pd.read_csv('planets.csv', header=40)
+data = pd.read_csv('planets_mod.csv', header=40)
 
 names=list(set(data["pl_hostname"])) #list of unique names
 names.sort() #sort the list
@@ -18,7 +18,7 @@ names.sort() #sort the list
 # do you want to check for resonances or for mutual hill radii separation? NEEDS TO BE CHANGED EVERYTIME!
 checkresonance=0
 
-names=["KOI-94"]
+names=["KOI-94_mas"]
 
 #for each system
 for i in range(len(names)):
