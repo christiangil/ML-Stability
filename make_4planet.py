@@ -187,17 +187,25 @@ def write_jobs(indices, system, jobs_dir, norbits, Np):
 	os.system('mkdir %s'%jobs_dir)
 	for i in range(len(indices)):
 		id_ = indices[i]             #id number of sample
-		job_name = "%s_%d_%d"%(system,int(np.log10(norbits)),id_)
+		#job_name = "%s_%d_%d"%(system,int(np.log10(norbits)),id_)
+		job_name = "%s_%d"%(system,id_)
+
+		#ics-aci demands job names less than 16 characters, so just take stuff off of the beginning
+		if len(job_name)>15:
+			ics_aci_job_name=job_name[len(job_name)-15:]
+		else:
+			ics_aci_job_name=job_name
+    	
 		sh_script_name = "%s%s"%(jobs_dir,job_name)
 		with open(sh_script_name, 'w') as f:
 			f_head = open('job_header_icsaci','r')
 			f.write(f_head.read())
 			f_head.close()
-			f.write('#PBS -N %s \n'%job_name) #Names the job
+			f.write('#PBS -N %s \n'%ics_aci_job_name) #Names the job
 			f.write('cd $PBS_O_WORKDIR\n')      #This will be the directory the jobs are submitted from
 			f.write('source activate stability \n')
 			#f.write('python run_4planet.py %s %d %f %d %d %s >& batch.output\n'%(system,id_,Ms[id_-currentplace],norbits,Np,job_name))
-			f.write('python run_Nplanet.py %s %d %d %d %s >& batch.output\n'%(system,id_,norbits,Np,job_name))
+			f.write('python run_Nplanet.py %s %d %d %d %s >& batch.output\n'%(system,id_,norbits,Np,ics_aci_job_name))
 		f.close()
 
 	return 1
@@ -283,7 +291,7 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 		for i in range(sample.shape[0]):
 			plt.hist(e[i,:], bins='auto', facecolor='red', alpha=0.75)
 			fig = plt.gcf()
-			fig.savefig("%s planet %d eccentricities"%(samplename,i)+".png")   # save the figure to file
+			fig.savefig("%s planet %d eccentricities"%(samplename,i+1)+".png")   # save the figure to file
 			plt.close(fig)
 
 	#if you want to create jobs of all equivalent 3-planet systems

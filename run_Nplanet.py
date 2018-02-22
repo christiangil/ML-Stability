@@ -17,7 +17,8 @@ system = sys.argv[1]
 id_ = int(sys.argv[2])
 maxorbs = float(sys.argv[3])
 Nplanets = int(sys.argv[4])
-name = sys.argv[5]
+#name = sys.argv[5] #replaces because of name restrictions imposed by ics-aci
+name = "%s_%d_%d"%(system,int(np.log10(maxorbs)),id_)
 
 #load data
 data = pd.read_csv('systems/%s_data.csv'%system)
