@@ -33,16 +33,22 @@ def find_unsubmitted_jobs(jobs_dir):
 #'Kepler-286','Kepler-299','Kepler-304','Kepler-306','Kepler-338','Kepler-341','Kepler-342','Kepler-37','Kepler-402','Kepler-48',
 #'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
 
-#where jobs to submit are. NEEDS TO BE CHANGED EVERYTIME!
-jobs_dir = 'jobs/KOI-94_mas/'
+#what systems to use. NEEDS TO BE CHANGED EVERYTIME!
+#systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
+systems = ["Ari Fake 50 0.1"]
 
-files = find_unsubmitted_jobs(jobs_dir)
-Njobs_counter = 0
+for samplename in systems:
 
-#submit every found job
-for f in files:
-    job_name = f.split(jobs_dir)[1]
-    submit_job(f, job_name)
-    Njobs_counter += 1 #seems unnecessary to keep this
+    samplename=samplename.replace(" ","_") #take out spaces in the sample name (for creating directories)
+    jobs_dir="jobs/"+samplename+"/"
 
-print('submitted %d jobs'%Njobs_counter)
+    files = find_unsubmitted_jobs(jobs_dir)
+    Njobs_counter = 0
+
+    #submit every found job
+    for f in files:
+        job_name = f.split(jobs_dir)[1]
+        submit_job(f, job_name)
+        Njobs_counter += 1 #seems unnecessary to keep this
+
+    print('submitted %d jobs'%Njobs_counter)

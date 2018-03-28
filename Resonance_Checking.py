@@ -1,4 +1,26 @@
-#scrap
+# Script Description
+# resonance_checking - Can check resonance and compactness of an exoplanetary system
+# 	Looks at the preiod ratios and mutual hill radii separation of exoplanet archive systems
+# 
+# Inputs:
+# 
+# 	---
+# 
+# Outputs:
+# 
+#     print statements of the status of the system (whether it is close to resonance or compact (in a mutual hill radii sense)) 
+# 
+# Other files required: planets.csv (in exoplanet archive format), make_4planet.py
+# 
+# See also: ---
+# 
+# Author: Christian Gilbertson, BS., Physics and Engineering Science and Mechanics
+#     Graduate student at The Pennsylvania State University
+# Email address: chrisgil@psu.edu  
+# Website: https://sites.psu.edu/chrisgil/
+# February 2018; Last revision: 28-February-2018
+
+# ------------- BEGIN CODE --------------
 import numpy as np
 import pandas as pd
 import make_4planet as m4
@@ -48,6 +70,11 @@ for i in range(len(names)):
 			mlist[i]=np.mean(mass)
 			Plist[i]=np.mean(period)
 
+
+	#add manual masses or periods here (in units of days and earth masses)
+	#Plist=np.multiply(1,np.array( [1, 1.82, 3.5, 6.7]))
+	#mlist=np.multiply(1,np.array([23,23,23,23]))
+
 	#for resonance checking
 	if checkresonance:
 
@@ -88,7 +115,8 @@ for i in range(len(names)):
 
 		#get the star mass
 		Ms=sample["st_mass"][0:1].astype(np.float)
-		
+		#Ms=1 #DELETE THIS OR COMMENT OUT IF USING REAL SYSTEMS
+
 		#get semi-major axes
 		earth = 0.000003003
 		a=np.zeros(Np)
@@ -120,3 +148,6 @@ for i in range(len(names)):
 			print("semi-closely packed, %f | %f"%(maxsinglesep, maxdoublesep))
 		else:
 			print("very closely packed, %f"%maxdoublesep)
+		print(mlist)
+
+# ------------- END OF CODE --------------

@@ -38,7 +38,7 @@
 # COLUMN st_radlim:      Stellar Radius Limit Flag,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 # COLUMN st_radblend:    Stellar Radius Blend Flag,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 #,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-rowid,pl_hostname,pl_pnum,pl_orbper,pl_orbpererr1,pl_orbpererr2,pl_orbperlim,pl_orbeccen,pl_orbeccenerr1,pl_orbeccenerr2,pl_orbeccenlim,pl_orbincl,pl_orbinclerr1,pl_orbinclerr2,pl_orbincllim,pl_bmassj,pl_bmassjerr1,pl_bmassjerr2,pl_bmassjlim,pl_bmassprov,pl_radj,pl_radjerr1,pl_radjerr2,pl_radjlim,st_mass,st_masserr1,st_masserr2,st_masslim,st_massblend,st_rad,st_raderr1,st_raderr2,st_radlim,st_radblend,pl_ecos_omegabar,pl_ecos_omegabarerr1,pl_ecos_omegabarerr2,pl_esin_omegabar,pl_esin_omegabarerr1,pl_esin_omegabarerr2,notes
+rowid,pl_hostname,pl_pnum,pl_orbper,pl_orbpererr1,pl_orbpererr2,pl_orbperlim,pl_orbeccen,pl_orbeccenerr1,pl_orbeccenerr2,pl_orbeccenlim,pl_orbincl,pl_orbinclerr1,pl_orbinclerr2,pl_orbincllim,pl_bmassj,pl_bmassjerr1,pl_bmassjerr2,pl_bmassjlim,pl_bmassprov,pl_radj,pl_radjerr1,pl_radjerr2,pl_radjlim,st_mass,st_masserr1,st_masserr2,st_masslim,st_massblend,st_rad,st_raderr1,st_raderr2,st_radlim,st_radblend,,,,,,,notes
 118,GJ 3293,4,30.5987,0.0083,-0.0084,0,0.06,0.04,-0.04,0,,,,,0.07406,0.00277,-0.0028,0,Msini,,,,,0.42,,,0,0,0.4,0.03,-0.03,0,0,,,,,,,None
 119,GJ 3293,4,122.6196,0.2429,-0.2371,0,0.11,0.1,-0.08,0,,,,,0.06636,0.0039,-0.00396,0,Msini,,,,,0.42,,,0,0,0.4,0.03,-0.03,0,0,,,,,,,None
 120,GJ 3293,4,48.1345,0.0628,-0.0661,0,0.12,0.13,-0.09,0,,,,,0.02391,0.0033,-0.0033,0,Msini,,,,,0.42,,,0,0,0.4,0.03,-0.03,0,0,,,,,,,None
@@ -239,3 +239,83 @@ rowid,pl_hostname,pl_pnum,pl_orbper,pl_orbpererr1,pl_orbpererr2,pl_orbperlim,pl_
 3551,tau Cet,4,636.13,11.7,-47.69,0,0.16,0.07,-0.16,0,,,,0,0.01237,0.0033,-0.00431,0,Msini,,,,0,0.78,0.01,-0.01,0,0,,,,0,0,,,,,,,None
 3552,tau Cet,4,20,0.02,-0.01,0,0.06,0.13,-0.06,0,,,,0,0.00551,0.00079,-0.00126,0,Msini,,,,0,0.78,0.01,-0.01,0,0,,,,0,0,,,,,,,None
 3553,tau Cet,4,49.41,0.08,-0.1,0,0.23,0.16,-0.15,0,,,,0,0.00576,0.00214,-0.00082,0,Msini,,,,0,0.78,0.01,-0.01,0,0,,,,0,0,,,,,,,None
+1,Ari Fake 10,4,10,,,0,0.01,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10,4,18.2,,,0,0.01,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10,4,35,,,0,0.01,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10,4,67,,,0,0.01,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20,4,10,,,0,0.01,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20,4,18.2,,,0,0.01,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20,4,35,,,0,0.01,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20,4,67,,,0,0.01,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30,4,10,,,0,0.01,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30,4,18.2,,,0,0.01,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30,4,35,,,0,0.01,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30,4,67,,,0,0.01,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40,4,10,,,0,0.01,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40,4,18.2,,,0,0.01,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40,4,35,,,0,0.01,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40,4,67,,,0,0.01,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50,4,10,,,0,0.01,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50,4,18.2,,,0,0.01,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50,4,35,,,0,0.01,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50,4,67,,,0,0.01,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.05,4,10,,,0,0.05,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.05,4,18.2,,,0,0.05,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.05,4,35,,,0,0.05,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.05,4,67,,,0,0.05,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.05,4,10,,,0,0.05,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.05,4,18.2,,,0,0.05,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.05,4,35,,,0,0.05,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.05,4,67,,,0,0.05,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.05,4,10,,,0,0.05,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.05,4,18.2,,,0,0.05,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.05,4,35,,,0,0.05,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.05,4,67,,,0,0.05,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.05,4,10,,,0,0.05,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.05,4,18.2,,,0,0.05,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.05,4,35,,,0,0.05,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.05,4,67,,,0,0.05,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.05,4,10,,,0,0.05,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.05,4,18.2,,,0,0.05,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.05,4,35,,,0,0.05,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.05,4,67,,,0,0.05,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.1,4,10,,,0,0.1,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.1,4,18.2,,,0,0.1,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.1,4,35,,,0,0.1,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 10 0.1,4,67,,,0,0.1,,,0,,,,,0.031466331,0.001573317,-0.001573317,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.1,4,10,,,0,0.1,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.1,4,18.2,,,0,0.1,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.1,4,35,,,0,0.1,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 20 0.1,4,67,,,0,0.1,,,0,,,,,0.062932662,0.003146633,-0.003146633,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.1,4,10,,,0,0.1,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.1,4,18.2,,,0,0.1,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.1,4,35,,,0,0.1,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 30 0.1,4,67,,,0,0.1,,,0,,,,,0.094398993,0.00471995,-0.00471995,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.1,4,10,,,0,0.1,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.1,4,18.2,,,0,0.1,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.1,4,35,,,0,0.1,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 40 0.1,4,67,,,0,0.1,,,0,,,,,0.125865324,0.006293266,-0.006293266,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.1,4,10,,,0,0.1,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.1,4,18.2,,,0,0.1,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.1,4,35,,,0,0.1,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 50 0.1,4,67,,,0,0.1,,,0,,,,,0.157331655,0.007866583,-0.007866583,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 60 0.1,4,10,,,0,0.1,,,0,,,,,0.188797986,0.009439899,-0.009439899,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 60 0.1,4,18.2,,,0,0.1,,,0,,,,,0.188797986,0.009439899,-0.009439899,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 60 0.1,4,35,,,0,0.1,,,0,,,,,0.188797986,0.009439899,-0.009439899,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 60 0.1,4,67,,,0,0.1,,,0,,,,,0.188797986,0.009439899,-0.009439899,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 70 0.1,4,10,,,0,0.1,,,0,,,,,0.220264317,0.011013216,-0.011013216,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 70 0.1,4,18.2,,,0,0.1,,,0,,,,,0.220264317,0.011013216,-0.011013216,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 70 0.1,4,35,,,0,0.1,,,0,,,,,0.220264317,0.011013216,-0.011013216,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 70 0.1,4,67,,,0,0.1,,,0,,,,,0.220264317,0.011013216,-0.011013216,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 80 0.1,4,10,,,0,0.1,,,0,,,,,0.251730648,0.012586532,-0.012586532,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 80 0.1,4,18.2,,,0,0.1,,,0,,,,,0.251730648,0.012586532,-0.012586532,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 80 0.1,4,35,,,0,0.1,,,0,,,,,0.251730648,0.012586532,-0.012586532,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 80 0.1,4,67,,,0,0.1,,,0,,,,,0.251730648,0.012586532,-0.012586532,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 90 0.1,4,10,,,0,0.1,,,0,,,,,0.283196979,0.014159849,-0.014159849,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 90 0.1,4,18.2,,,0,0.1,,,0,,,,,0.283196979,0.014159849,-0.014159849,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 90 0.1,4,35,,,0,0.1,,,0,,,,,0.283196979,0.014159849,-0.014159849,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 90 0.1,4,67,,,0,0.1,,,0,,,,,0.283196979,0.014159849,-0.014159849,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 100 0.1,4,10,,,0,0.1,,,0,,,,,0.31466331,0.015733166,-0.015733166,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 100 0.1,4,18.2,,,0,0.1,,,0,,,,,0.31466331,0.015733166,-0.015733166,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 100 0.1,4,35,,,0,0.1,,,0,,,,,0.31466331,0.015733166,-0.015733166,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.
+1,Ari Fake 100 0.1,4,67,,,0,0.1,,,0,,,,,0.31466331,0.015733166,-0.015733166,0,Mass,,,,,1,,,0,,,,,,,,,,,,,Fake system for testing stability regime. No star or eccentricity errors. Planet mass errors 5%.

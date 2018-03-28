@@ -18,7 +18,8 @@ id_ = int(sys.argv[2])
 maxorbs = float(sys.argv[3])
 Nplanets = int(sys.argv[4])
 #name = sys.argv[5] #replaces because of name restrictions imposed by ics-aci
-name = "%s_%d_%d"%(system,int(np.log10(maxorbs)),id_)
+#name = "%s_%d_%d"%(system,int(np.log10(maxorbs)),id_)
+name = "%s_%d"%(system,id_)
 
 #load data
 data = pd.read_csv('systems/%s_data.csv'%system)
@@ -30,11 +31,16 @@ Ms=d["Ms"]
 a=np.zeros(Nplanets)
 for i in range(Nplanets):
     a[i]=((d["P%d"%(i+1)]/365*(2*np.pi))**2 * Ms)**(1./3.)
-mut_hill=np.zeros(Nplanets-1)
-earth = 0.000003003
-for i in range(Nplanets-1):
-    mut_hill[i]=np.mean([a[i],a[i+1]])*((d["m%d"%(i+1)]+d["m%d"%(i+2)])*earth/Ms/3.)**(1./3.)
-minhill=min(mut_hill)
+solar_mass_2_earth_mass = 0.000003003
+
+#mut_hill=np.zeros(Nplanets-1)
+#for i in range(Nplanets-1):
+#    mut_hill[i]=np.mean([a[i],a[i+1]])*((d["m%d"%(i+1)]+d["m%d"%(i+2)])*solar_mass_2_earth_mass/Ms/3.)**(1./3.)
+#minradius=min(mut_hill)
+
+radii=np.zeros(Nplanets)
+for i in range(Nplanets):
+    radii[i]=a[i]*(d["m%d"%(i+1)]*solar_mass_2_earth_mass/Ms/3.)**(1./3.)/2 #half hill radius
 
 #set up simulation
 sim = rebound.Simulation()
@@ -49,12 +55,12 @@ sim.add(m=Ms)
 
 #add planets
 for i in range(1,Nplanets+1):
-    m = d["m%d"%i]*earth
+    m = d["m%d"%i]*solar_mass_2_earth_mass
     P = d["P%d"%i]
     e = d["e%d"%i]
     w = d["w%d"%i]
     M = d["MA%d"%i]
-    sim.add(m=m, P=P*2*np.pi/365., e=e, omega=w, M=M, r=minhill) #G=1 units!
+    sim.add(m=m, P=P*2*np.pi/365., e=e, omega=w, M=M, r=radii[i-1]) #G=1 units!
 sim.move_to_com()
 
 #timestep
@@ -75,8 +81,13 @@ sim.initSimulationArchive('output/%s_SA.bin'%name, interval=tmax/1000.)     #sav
 E0 = sim.calculate_energy()
 t0 = time.time()
 print("starting simulation")
-sim.integrate(tmax)                                                         #will stop if collision occurs
+
+try:
+    sim.integrate(tmax) #will stop if collision occurs
+except:
+    pass
 print("finished simulation")
+
 Ef = sim.calculate_energy()
 Eerr = abs((Ef-E0)/E0)
 

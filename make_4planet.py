@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import mr_forecast as mr
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import math
 import sys
 import os
@@ -33,16 +33,17 @@ def returnvalues(sample,parname,nsamples,ind=0):
 			#just return a list of the mean repeated
 			values=np.repeat(mean,nsamples)
 
-			limitflag=sample[parname+"lim"][ind:ind+1].astype(np.int)
-			#print a warning
-			basewarning="No "+parname+" error information found for planet"+str(ind+1)+". The mean value is being repeated. "
-			if limitflag==0:
-				warnings.warn(basewarning+"The value does not appear to be a limit")
-			elif limitflag==1:
-				warnings.warn(basewarning+"The value appears to be a limit")
-			else:
-				warnings.warn(basewarning+"The value does not appear to be a limit, but an improperly accounted for special case inserted by the programmer modifying the orginal data file")
-			warnings.resetwarnings()
+			# FIX THIS
+			# limitflag=sample[parname+"lim"][ind:ind+1].astype(np.int)
+			# #print a warning
+			# basewarning="No "+parname+" error information found for planet"+str(ind+1)+". The mean value is being repeated. "
+			# if limitflag==0:
+			# 	warnings.warn(basewarning+"The value does not appear to be a limit")
+			# elif limitflag==1:
+			# 	warnings.warn(basewarning+"The value appears to be a limit")
+			# else:
+			# 	warnings.warn(basewarning+"The value does not appear to be a limit, but an improperly accounted for special case inserted by the programmer modifying the orginal data file")
+			# warnings.resetwarnings()
 			
 		#if an error is found
 		else:
@@ -77,7 +78,7 @@ def returnvalues(sample,parname,nsamples,ind=0):
 			#err=np.mean(np.array(abs(sample[parname+"err1"][ind:ind+1].astype(np.float)),abs(sample[parname+"err2"][ind:ind+1].astype(np.float))))	
 			#values=np.random.normal(mean,err,nsamples)
 
-	#values[values<0]=0 #should be accounted for by earlier while loop
+	#values[values<0]=0 #should be accounted for by earlier while loops
 	return np.array(values), found
 
 #Assigns probabilistic mass and periods, and randomly draws arguments of periapsis, inclinations, and mean anomaly.
@@ -109,7 +110,7 @@ def planetparameters(sample,index, nsamples):
 
 	return m, P, inc, w, MA
 
-#Draws eccentricities for those planets that dont have any
+#Draws eccentricities for those planets that dont have any (TODO: add capability to do all eccentricities with one call)
 def eccentricities(sample,index,nsamples,ms,p1,w,p0=np.zeros(2),p2=np.zeros(2),m0=np.zeros(2),m2=np.zeros(2)):
 
 	limitflag=sample["pl_orbeccenlim"][index:index+1].astype(np.int)
@@ -196,6 +197,10 @@ def write_jobs(indices, system, jobs_dir, norbits, Np):
 		else:
 			ics_aci_job_name=job_name
     	
+    	#the job names need to start with a letter
+		if ics_aci_job_name[0]=="_":
+			ics_aci_job_name="X"+ics_aci_job_name[1:]
+
 		sh_script_name = "%s%s"%(jobs_dir,job_name)
 		with open(sh_script_name, 'w') as f:
 			f_head = open('job_header_icsaci','r')
@@ -320,7 +325,20 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 data = pd.read_csv('planets_mod.csv', header=40)
 
 if __name__ == '__main__': #do this if the file is called directly from the console (not by another function)
+	
+	#number of sims created. NEEDS TO BE CHANGED EVERYTIME!
+	samps = 100
+	
+	#number of orbits of innermost planet. NEEDS TO BE CHANGED EVERYTIME!
+	norbits = 1e9
+	
+	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
+	perm=0
 
+	#do you want to plot the distribution of eccentricities
+	plots=0
+
+	#get names of all systems in exoplanet archive file
 	names=list(set(data["pl_hostname"])) #list of unique names
 	names.sort() #sort the list
 	#print(names)
@@ -329,36 +347,28 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	#'Kepler-223','Kepler-224','Kepler-235','Kepler-24','Kepler-245','Kepler-251','Kepler-256','Kepler-26','Kepler-265','Kepler-282',
 	#'Kepler-286','Kepler-299','Kepler-304','Kepler-306','Kepler-338','Kepler-341','Kepler-342','Kepler-37','Kepler-402','Kepler-48',
 	#'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
-	
-	#system you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
-	samplename= "KOI-94_mas"
 
-	#finding and isolating the system data
-	sampleindex=np.where(data["pl_hostname"]==samplename)[0]
-	sample=data[sampleindex[0]:sampleindex[-1]+1]
+	#systems you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
+	# systems = names
+	systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
 
-	sample=sample.sort_values(by="pl_orbper") #sort the samples in order of their periods
-	samplename=samplename.replace(" ","_") #take out spaces in the sample name (for creating directories)
+	for samplename in systems:
 
-	dir_path = os.path.dirname(os.path.realpath(__file__)) #directory of this program
-	jobs_dir = dir_path+"/jobs/"+samplename+"/"     #output directory for jobs
-	dat_dir = dir_path+"/systems/"    #output directory for storing _data.csv files
-	
-	#number of sims created. NEEDS TO BE CHANGED EVERYTIME!
-	samps = 200
-	
-	#number of orbits of innermost planet. NEEDS TO BE CHANGED EVERYTIME!
-	norbits = 1e9
-	
-	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
-	perm=1
+		if samplename in names:
+			#finding and isolating the system data
+			sampleindex=np.where(data["pl_hostname"]==samplename)[0]
+			sample=data[sampleindex[0]:sampleindex[-1]+1]
 
-	#do you want to plot the distribution of eccentricities
-	plots=1
+			sample=sample.sort_values(by="pl_orbper") #sort the samples in order of their periods
+			samplename=samplename.replace(" ","_") #take out spaces in the sample name (for creating directories)
 
-	#generalize to multiple systems later?
-	# systems = [samplename]
-	# for system in systems:
+			dir_path = os.path.dirname(os.path.realpath(__file__)) #directory of this program
+			jobs_dir = dir_path+"/jobs/"+samplename+"/"     #output directory for jobs
+			dat_dir = dir_path+"/systems/"    #output directory for storing _data.csv files
+		
+			#generate jobs for original system
+			out = generate_jobs(sample,samplename,dat_dir,jobs_dir,dir_path,samps,norbits,permute=perm,plotstuff=plots)
+		
+		else:
 
-	#generate jobs for original system
-	out = generate_jobs(sample,samplename,dat_dir,jobs_dir,dir_path,samps,norbits,permute=perm,plotstuff=plots)
+			print(samplename+" is not in the exoplanet archive file provided")
