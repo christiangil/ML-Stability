@@ -327,13 +327,13 @@ data = pd.read_csv('planets_mod.csv', header=40)
 if __name__ == '__main__': #do this if the file is called directly from the console (not by another function)
 	
 	#number of sims created. NEEDS TO BE CHANGED EVERYTIME!
-	samps = 100
+	samps = 500
 	
 	#number of orbits of innermost planet. NEEDS TO BE CHANGED EVERYTIME!
 	norbits = 1e9
 	
 	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
-	perm=0
+	perm=1
 
 	#do you want to plot the distribution of eccentricities
 	plots=0
@@ -350,8 +350,8 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 
 	#systems you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
 	# systems = names
-	systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
-
+	#systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
+	systems = ["Ari Fake 10 0.1"]
 	for samplename in systems:
 
 		if samplename in names:

@@ -41,10 +41,12 @@ solar_mass_2_earth_mass = 0.000003003
 radii=np.zeros(Nplanets)
 for i in range(Nplanets):
     radii[i]=a[i]*(d["m%d"%(i+1)]*solar_mass_2_earth_mass/Ms/3.)**(1./3.)/2 #half hill radius
+    #radii[i]=a[0]*10**(-4) #comparable to a jupiter radius (rJ=69911 km vs ~74800 km for 0.1% of 5 au)
 
 #set up simulation
 sim = rebound.Simulation()
 sim.integrator = 'whfast'
+#sim.integrator = 'ias15'
 sim.G = 1
 sim.ri_whfast.safe_mode = 0
 sim.collision = 'direct'
@@ -52,6 +54,7 @@ sim.collision_resolve = collision
 
 #add star
 sim.add(m=Ms)
+#sim.add(m=Ms, r=radii[0]*10**(-3))
 
 #add planets
 for i in range(1,Nplanets+1):
@@ -67,15 +70,18 @@ sim.move_to_com()
 #To ensure a low energy error (dE/E(0) < 1e-9) the timestep needs to be a small fraction of the innermost orbital period (in this case roughly 3%).
 #Studies have shown that if the timestep is an exact fraction of the innermost orbital period then numerical artifacts can be introduced 
 dt = 2.*math.sqrt(3)/100. #0.0346410162
+#dt = 2.*math.sqrt(3)/3000. #0.0346410162/30
 P1 = sim.particles[1].P
 sim.dt = dt*P1 # ~3% orbital period
 tmax = maxorbs*P1
 
 #save simulation archive
-#dir_path = os.path.dirname(os.path.realpath(__file__)) #directory of this program
-#out_dir = dir_path+"/output/"
+dir_path = os.path.dirname(os.path.realpath(__file__)) #directory of this program
+out_dir = dir_path+"/output/"
 #os.system('mkdir %s'%out_dir)
-sim.initSimulationArchive('output/%s_SA.bin'%name, interval=tmax/1000.)     #save checkpoints.
+out_dir=out_dir+"%s/"%system
+os.system('mkdir %s'%out_dir)
+sim.initSimulationArchive(out_dir+'%s_SA.bin'%name, interval=tmax/1000.)     #save checkpoints.
 
 #simulate
 E0 = sim.calculate_energy()
@@ -88,10 +94,12 @@ except:
     pass
 print("finished simulation")
 
+sim.save(out_dir+'%s_final.bin'%name)
+
 Ef = sim.calculate_energy()
 Eerr = abs((Ef-E0)/E0)
 
 #need to store the result somewhere
 f = open('systems/%s_Nbodyresults.csv'%system, "a")
 f.write('%s, %d, %e, %e, %e, %e, %e \n'%(name,id_,maxorbs,P1,sim.t,Eerr,time.time()-t0))
-
+f.close()

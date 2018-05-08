@@ -38,9 +38,9 @@ names.sort() #sort the list
 #'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
 
 # do you want to check for resonances or for mutual hill radii separation? NEEDS TO BE CHANGED EVERYTIME!
-checkresonance=0
+checkresonance=1
 
-names=["KOI-94_mas"]
+names=["Ari Fake 10 0.1"]
 
 #for each system
 for i in range(len(names)):

@@ -18,7 +18,7 @@ def find_unsubmitted_jobs(jobs_dir):
     for j in jobs:
         basename = os.path.basename(j)
         #if a simulation archive exits, the job with that name has already been submitted
-        if os.path.isfile('output/%s_SA.bin'%basename) == False:
+        if os.path.isfile('output/'+samplename+'/%s_SA.bin'%basename) == False:
             unsub_jobs.append(j)
         else:
             N_jobs_submitted += 1
@@ -33,10 +33,19 @@ def find_unsubmitted_jobs(jobs_dir):
 #'Kepler-286','Kepler-299','Kepler-304','Kepler-306','Kepler-338','Kepler-341','Kepler-342','Kepler-37','Kepler-402','Kepler-48',
 #'Kepler-49','Kepler-758','Kepler-79','Kepler-82','Kepler-85','WASP-47','tau Cet']
 
+permute=0
+
 #what systems to use. NEEDS TO BE CHANGED EVERYTIME!
 #systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
-systems = ["Ari Fake 50 0.1"]
+#systems = ["Rasio Fake 2 Jup 1"]
+systems = ["Ari Fake 10 0.1 r2"]
+duplicate=list(systems)
+if permute:
+    for samplename in duplicate:
+        for i in range(4):
+            systems += [samplename+" r%d"%(i+1)]
 
+#print(systems)
 for samplename in systems:
 
     samplename=samplename.replace(" ","_") #take out spaces in the sample name (for creating directories)
@@ -46,9 +55,9 @@ for samplename in systems:
     Njobs_counter = 0
 
     #submit every found job
-    for f in files:
-        job_name = f.split(jobs_dir)[1]
-        submit_job(f, job_name)
-        Njobs_counter += 1 #seems unnecessary to keep this
+    # for f in files:
+    #     job_name = f.split(jobs_dir)[1]
+    #     submit_job(f, job_name)
+    #     Njobs_counter += 1 #seems unnecessary to keep this
 
     print('submitted %d jobs'%Njobs_counter)
