@@ -10,15 +10,15 @@ def submit_job(f, job_name):
     os.system('qsub %s'%job_name)
     os.system('mv %s %s'%(job_name,f))
 
-#retrieves list of unsubmitted job files in the specified jobs directory
-def find_unsubmitted_jobs(jobs_dir):
+#retrieves list of unsubmitted or incomplete job files in the specified jobs directory
+def find_unfinished_jobs(jobs_dir):
     unsub_jobs = []
     N_jobs_submitted = 0
     jobs = glob.glob('%s/*'%jobs_dir)
     for j in jobs:
         basename = os.path.basename(j)
-        #if a simulation archive exits, the job with that name has already been submitted
-        if os.path.isfile('output/'+samplename+'/%s_SA.bin'%basename) == False:
+        #if a final simulation archive exits, the job with that name has already been submitted
+        if os.path.isfile('output/'+samplename+'/%s_final.bin'%basename) == False:
             unsub_jobs.append(j)
         else:
             N_jobs_submitted += 1
@@ -38,7 +38,13 @@ permute=0
 #what systems to use. NEEDS TO BE CHANGED EVERYTIME!
 #systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
 #systems = ["Rasio Fake 2 Jup 1"]
-systems = ["Ari Fake 10 0.1 r2"]
+systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
+# for i in ["bully ", "super earth ", "neptune ", "Ari Fake 15 ", "analog ", "3.5 planet "]:
+# # for i in ["bully "]:
+#     for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
+#     # for j in ["0.1"]:
+#         systems+=[i+j]
+
 duplicate=list(systems)
 if permute:
     for samplename in duplicate:
@@ -51,13 +57,13 @@ for samplename in systems:
     samplename=samplename.replace(" ","_") #take out spaces in the sample name (for creating directories)
     jobs_dir="jobs/"+samplename+"/"
 
-    files = find_unsubmitted_jobs(jobs_dir)
+    files = find_unfinished_jobs(jobs_dir)
     Njobs_counter = 0
 
-    #submit every found job
-    # for f in files:
-    #     job_name = f.split(jobs_dir)[1]
-    #     submit_job(f, job_name)
-    #     Njobs_counter += 1 #seems unnecessary to keep this
+    # submit every found job
+    for f in files:
+        job_name = f.split(jobs_dir)[1]
+        submit_job(f, job_name)
+        Njobs_counter += 1 #seems unnecessary to keep this
 
     print('submitted %d jobs'%Njobs_counter)

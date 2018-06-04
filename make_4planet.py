@@ -98,9 +98,20 @@ def planetparameters(sample,index, nsamples):
 	P, found=returnvalues(sample,"pl_orbper",nsamples,ind=index)
 
 	#inclination
-	inc=np.zeros(nsamples)
+	inc, found=returnvalues(sample,"pl_orbincl",nsamples,ind=index)
+	
+	#if no inclinatio is given, make something non-zero based on the planets transiting
+	if not found:		
+		Rs, found=returnvalues(sample,"st_rad",nsamples,ind=index)
+		if not found:
+			Rs = np.ones(nsamples)
+		Rs=np.mean(Rs)
+		a=np.cbrt((np.mean(P)/365.25)**2)
+		Rs2AU=0.00465047
+		inc=np.random.uniform(high=0.9*Rs*Rs2AU/a, size=nsamples)
 
-	#longitude of ascending node not necessary because inclination is 0
+	#longitude of ascending node
+	W=2*np.pi*np.random.sample(nsamples)
 
 	#argument of periapsis
 	w=2*np.pi*np.random.sample(nsamples)
@@ -108,7 +119,7 @@ def planetparameters(sample,index, nsamples):
 	#mean anomaly
 	MA=2*np.pi*np.random.sample(nsamples)
 
-	return m, P, inc, w, MA
+	return m, P, inc, W, w, MA
 
 #Draws eccentricities for those planets that dont have any (TODO: add capability to do all eccentricities with one call)
 def eccentricities(sample,index,nsamples,ms,p1,w,p0=np.zeros(2),p2=np.zeros(2),m0=np.zeros(2),m2=np.zeros(2)):
@@ -198,7 +209,7 @@ def write_jobs(indices, system, jobs_dir, norbits, Np):
 			ics_aci_job_name=job_name
     	
     	#the job names need to start with a letter
-		if ics_aci_job_name[0]=="_":
+		if ics_aci_job_name[0]=="_" or ics_aci_job_name[0].isdigit() or ics_aci_job_name[0]==".":
 			ics_aci_job_name="X"+ics_aci_job_name[1:]
 
 		sh_script_name = "%s%s"%(jobs_dir,job_name)
@@ -208,7 +219,7 @@ def write_jobs(indices, system, jobs_dir, norbits, Np):
 			f_head.close()
 			f.write('#PBS -N %s \n'%ics_aci_job_name) #Names the job
 			f.write('cd $PBS_O_WORKDIR\n')      #This will be the directory the jobs are submitted from
-			f.write('source activate stability \n')
+			f.write('source activate ml-stab \n')
 			#f.write('python run_4planet.py %s %d %f %d %d %s >& batch.output\n'%(system,id_,Ms[id_-currentplace],norbits,Np,job_name))
 			f.write('python run_Nplanet.py %s %d %d %d %s >& batch.output\n'%(system,id_,norbits,Np,ics_aci_job_name))
 		f.close()
@@ -227,45 +238,50 @@ def collect_parameters(sample, n_sims):
 	#arrays to hold all planet parameters
 	m = np.zeros((Np,n_sims))
 	P = np.zeros((Np,n_sims))
+	e = np.zeros((Np,n_sims))
 	inc = np.zeros((Np,n_sims))
+	W = np.zeros((Np,n_sims))
 	w = np.zeros((Np,n_sims))
 	MA = np.zeros((Np,n_sims))
-	e = np.zeros((Np,n_sims))
 
 	#get all planet parameters
 	for i in range(Np):
-		m[i,:], P[i,:], inc[i,:], w[i,:], MA[i,:] = planetparameters(sample, i, n_sims)
+		m[i,:], P[i,:], inc[i,:], W[i,:], w[i,:], MA[i,:] = planetparameters(sample, i, n_sims)
 
 	#get all eccentricities (first and last have to be done separately as they dont fit the syntax pattern of planets that are surrounded by other planets)
 	e[0,:], w[0,:] = eccentricities(sample,0,n_sims,Ms,P[0,:],w[0,:],p2=P[1,:],m2=m[1,:])
 	e[Np-1,:], w[Np-1,:] = eccentricities(sample,Np-1,n_sims,Ms,P[Np-1,:],w[Np-1,:],p0=P[Np-2,:],m0=m[Np-2,:])
 	for i in range(1,Np-1):
 		e[i,:], w[i,:] = eccentricities(sample,i,n_sims,Ms,P[i,:],w[i,:],p0=P[i-1,:],p2=P[i+1,:],m0=m[i-1,:],m2=m[i+1,:])
-	return Ms, m, P, inc, w, MA, e, Np
+	return Ms, m, P, e, inc, W, w, MA, Np
 
 #saves data to csv
-def save_data(Ms, m, P, w, MA, e, Np, n_sims, dat_dir, system):
+def save_data(Ms, m, P, e, inc, W, w, MA, Np, n_sims, dat_dir, system):
 
 	#generate file header based on amount of planets
 	orb_elements = ["Ms"]
 	for i in range(1,Np+1):
 		orb_elements.append("m%d"%i)
-		orb_elements.append("MA%d"%i)
 		orb_elements.append("P%d"%i)
 		orb_elements.append("e%d"%i)
+		orb_elements.append("inc%d"%i)
+		orb_elements.append("W%d"%i)
 		orb_elements.append("w%d"%i)
+		orb_elements.append("MA%d"%i)		
 
 	#create properly formatted data frame (this could probably be done more efficiently)
 	data = []
 	for i in range(n_sims):
-		intermediate=np.zeros(5*Np+1)
+		intermediate=np.zeros(7*Np+1)
 		intermediate[0]=Ms[i]
 		for x in range(Np):
-			intermediate[5*x+1]=m[x,i]
-			intermediate[5*x+2]=MA[x,i]
-			intermediate[5*x+3]=P[x,i]
-			intermediate[5*x+4]=e[x,i]
-			intermediate[5*x+5]=w[x,i]
+			intermediate[7*x+1]=m[x,i]
+			intermediate[7*x+2]=P[x,i]
+			intermediate[7*x+3]=e[x,i]
+			intermediate[7*x+4]=inc[x,i]
+			intermediate[7*x+5]=W[x,i]
+			intermediate[7*x+6]=w[x,i]
+			intermediate[7*x+7]=MA[x,i]
 		data.append(intermediate)
 		#data.append([Ms[i],m[0,i],MA[0,i],P[0,i],e[0,i],w[0,i],m2[i],MA2[i],P2[i],e2[i],w2[i],m3[i],MA3[i],P3[i],e3[i],w3[i],m4[i],MA4[i],P4[i],e4[i],w4[i]])
 	data = pd.DataFrame(np.asarray(data),columns=orb_elements)
@@ -287,8 +303,8 @@ def save_data(Ms, m, P, w, MA, e, Np, n_sims, dat_dir, system):
 def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute=0,plotstuff=0):
 
 	#create and save parameters and create job files for original system
-	Ms, m, P, inc, w, MA, e, Np = collect_parameters(sample, n_sims)
-	indices = save_data(Ms, m, P, w, MA, e, Np, n_sims, dat_dir, system)
+	Ms, m, P, e, inc, W, w, MA, Np = collect_parameters(sample, n_sims)
+	indices = save_data(Ms, m, P, e, inc, W, w, MA, Np, n_sims, dat_dir, system)
 	out = write_jobs(indices, system, jobs_dir, norbits, Np)
 
 	if plotstuff:
@@ -310,7 +326,7 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 			new_jobs_dir = dir_path+"/jobs/"+new_name+"/"     #output directory for jobs
 			
 			#save the data and write the jobs for the new systems
-			new_indices = save_data(Ms, np.delete(m,i,0), np.delete(P,i,0), np.delete(w,i,0), np.delete(MA,i,0), np.delete(e,i,0), Np-1, n_sims, dat_dir, new_name)
+			new_indices = save_data(Ms, np.delete(m,i,0), np.delete(P,i,0), np.delete(e,i,0), np.delete(inc,i,0), np.delete(W,i,0), np.delete(W,i,0), np.delete(MA,i,0), Np-1, n_sims, dat_dir, new_name)
 			out = write_jobs(new_indices, new_name, new_jobs_dir, norbits, Np-1)
 		
 		print("Generated %d (%d permuted) simulations for %s"%(samps, samps*Np, samplename))
@@ -333,14 +349,14 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	norbits = 1e9
 	
 	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
-	perm=1
+	perm=0
 
 	#do you want to plot the distribution of eccentricities
 	plots=0
 
 	#get names of all systems in exoplanet archive file
 	names=list(set(data["pl_hostname"])) #list of unique names
-	names.sort() #sort the list
+	# names.sort() #sort the list
 	#print(names)
 	#['GJ 3293','GJ 676 A','GJ 876','HD 141399','HD 160691','HD 20794','HR 8799','K2-72','KOI-94','Kepler-106','Kepler-107','Kepler-132',
 	#'Kepler-1388','Kepler-1542','Kepler-167','Kepler-172','Kepler-176','Kepler-197','Kepler-208','Kepler-215','Kepler-220','Kepler-221',
@@ -351,7 +367,12 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	#systems you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
 	# systems = names
 	#systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
-	systems = ["Ari Fake 10 0.1"]
+	systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
+	# for i in ["bully ", "super earth ", "neptune ", "Ari Fake 15 ", "analog ", "3.5 planet "]:
+	# # for i in ["3.5 planet "]:
+	# 	for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
+	# 		systems+=[i+j]
+	#print(systems)
 	for samplename in systems:
 
 		if samplename in names:

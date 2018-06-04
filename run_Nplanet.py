@@ -7,10 +7,15 @@ import rebound
 import time
 import math
 
-#if a collision occurs, end the simulation
-def collision(reb_sim, col):
-    reb_sim.contents._status = 5 # causes simulation to stop running and have flag for whether sim stopped due to collision
-    return 0
+# #if a collision occurs, end the simulation
+# def collision(reb_sim, col):
+#     reb_sim.contents._status = 5 # causes simulation to stop running and have flag for whether sim stopped due to collision
+#     return 0
+
+def replace_snapshot(sim, filename):
+    if os.path.isfile(filename):
+        os.remove(filename)
+    sim.simulationarchive_snapshot(filename)
 
 #arguments
 system = sys.argv[1]
@@ -31,16 +36,16 @@ Ms=d["Ms"]
 a=np.zeros(Nplanets)
 for i in range(Nplanets):
     a[i]=((d["P%d"%(i+1)]/365*(2*np.pi))**2 * Ms)**(1./3.)
-solar_mass_2_earth_mass = 0.000003003
+earth_mass_2_solar_mass = 0.000003003
 
 #mut_hill=np.zeros(Nplanets-1)
 #for i in range(Nplanets-1):
-#    mut_hill[i]=np.mean([a[i],a[i+1]])*((d["m%d"%(i+1)]+d["m%d"%(i+2)])*solar_mass_2_earth_mass/Ms/3.)**(1./3.)
+#    mut_hill[i]=np.mean([a[i],a[i+1]])*((d["m%d"%(i+1)]+d["m%d"%(i+2)])*earth_mass_2_solar_mass/Ms/3.)**(1./3.)
 #minradius=min(mut_hill)
 
 radii=np.zeros(Nplanets)
 for i in range(Nplanets):
-    radii[i]=a[i]*(d["m%d"%(i+1)]*solar_mass_2_earth_mass/Ms/3.)**(1./3.)/2 #half hill radius
+    radii[i]=a[i]*(d["m%d"%(i+1)]*earth_mass_2_solar_mass/Ms/3.)**(1./3.)/2 #half hill radius
     #radii[i]=a[0]*10**(-4) #comparable to a jupiter radius (rJ=69911 km vs ~74800 km for 0.1% of 5 au)
 
 #set up simulation
@@ -48,9 +53,18 @@ sim = rebound.Simulation()
 sim.integrator = 'whfast'
 #sim.integrator = 'ias15'
 sim.G = 1
+
+#http://rebound.readthedocs.io/en/latest/ipython/AdvWHFast.html
+#Now it becomes the user’s responsibility to appropriately synchronize 
+#and recalculate jacobi coordinates when needed. You can tell WHFast 
+#to recalculate Jacobi coordinates for a given timestep (say after 
+#you change a particle’s mass) with the sim.ri_whfast.recalculate_jacobi_this_timestep 
+#flag. After it recalculates Jacobi coordinates, WHFast will reset 
+#this flag to zero, so you just set it each time you mess with the particles.
 sim.ri_whfast.safe_mode = 0
-sim.collision = 'direct'
-sim.collision_resolve = collision
+
+sim.collision = 'line'
+# sim.collision_resolve = collision
 
 #add star
 sim.add(m=Ms)
@@ -58,12 +72,14 @@ sim.add(m=Ms)
 
 #add planets
 for i in range(1,Nplanets+1):
-    m = d["m%d"%i]*solar_mass_2_earth_mass
+    m = d["m%d"%i]*earth_mass_2_solar_mass
     P = d["P%d"%i]
     e = d["e%d"%i]
+    inc = d["inc%d"%i]
+    W = d["W%d"%i]
     w = d["w%d"%i]
     M = d["MA%d"%i]
-    sim.add(m=m, P=P*2*np.pi/365., e=e, omega=w, M=M, r=radii[i-1]) #G=1 units!
+    sim.add(m=m, P=P*2*np.pi/365., e=e, inc=inc, Omega=W, omega=w, M=M, r=radii[i-1]) #G=1 units!
 sim.move_to_com()
 
 #timestep
@@ -81,7 +97,9 @@ out_dir = dir_path+"/output/"
 #os.system('mkdir %s'%out_dir)
 out_dir=out_dir+"%s/"%system
 os.system('mkdir %s'%out_dir)
-sim.initSimulationArchive(out_dir+'%s_SA.bin'%name, interval=tmax/1000.)     #save checkpoints.
+
+sim.automateSimulationArchive(out_dir+'%s_SA.bin'%name, interval=tmax/1000, deletefile=True) #save checkpoints.
+# sim.automateSimulationArchive(filename, interval=tmax/1000, deletefile=True) #delete an existing file if found
 
 #simulate
 E0 = sim.calculate_energy()
@@ -89,17 +107,18 @@ t0 = time.time()
 print("starting simulation")
 
 try:
-    sim.integrate(tmax) #will stop if collision occurs
-except:
-    pass
+  sim.integrate(tmax)
+  collision=0
+except rebound.Collision:
+  collision=1
 print("finished simulation")
 
-sim.save(out_dir+'%s_final.bin'%name)
+replace_snapshot(sim, out_dir+'%s_final.bin'%name)
 
 Ef = sim.calculate_energy()
 Eerr = abs((Ef-E0)/E0)
 
 #need to store the result somewhere
 f = open('systems/%s_Nbodyresults.csv'%system, "a")
-f.write('%s, %d, %e, %e, %e, %e, %e \n'%(name,id_,maxorbs,P1,sim.t,Eerr,time.time()-t0))
+f.write('%s, %d, %e, %e, %e, %e, %e, %d \n'%(name,id_,maxorbs,P1,sim.t,Eerr,time.time()-t0, collision))
 f.close()
