@@ -9,24 +9,24 @@ import warnings
 
 #This function draws a distribution from the values listed in the planets.csv file from NASA's exoplanet archive and also returns whether it found anything
 def returnvalues(sample,parname,nsamples,ind=0):
-	
+
 	#get the mean
 	mean=sample[parname][ind:ind+1].astype(np.float)
-	
+
 	#if a mean isn't found
 	if math.isnan(mean):
 		found=False
 
 		#return a zero (used later)
 		values=0
-	
+
 	#if a mean is found
 	else:
 		found=True
-		
+
 		#get the positive error
 		err1=sample[parname+"err1"][ind:ind+1].astype(np.float)
-		
+
 		#if no error is found
 		if math.isnan(err1):
 
@@ -44,7 +44,7 @@ def returnvalues(sample,parname,nsamples,ind=0):
 			# else:
 			# 	warnings.warn(basewarning+"The value does not appear to be a limit, but an improperly accounted for special case inserted by the programmer modifying the orginal data file")
 			# warnings.resetwarnings()
-			
+
 		#if an error is found
 		else:
 
@@ -54,7 +54,7 @@ def returnvalues(sample,parname,nsamples,ind=0):
 			rand=np.random.normal(0,1,nsamples)
 			error=np.zeros(nsamples)
 			for x in range(0, nsamples):
-				
+
 				#if the drawn value will cause a negative final value (or a value greater than 1 for eccentricities), throw it out
 				if parname=="pl_orbeccen":
 					while float(mean+rand[x]*err2)<0 or float(mean+rand[x]*err1)>1:
@@ -65,7 +65,7 @@ def returnvalues(sample,parname,nsamples,ind=0):
 				else:
 					while float(mean+rand[x]*err2)<0:
 						rand[x]=np.random.normal(0,1,1)
-				
+
 				#multiply the error by its respective value
 				if rand[x]>0:
 					error[x]=rand[x]*err1
@@ -73,9 +73,9 @@ def returnvalues(sample,parname,nsamples,ind=0):
 					error[x]=rand[x]*err2
 
 			values=error+np.repeat(mean,nsamples)
-			
+
 			#this could be used if you didn't care about unequal errors
-			#err=np.mean(np.array(abs(sample[parname+"err1"][ind:ind+1].astype(np.float)),abs(sample[parname+"err2"][ind:ind+1].astype(np.float))))	
+			#err=np.mean(np.array(abs(sample[parname+"err1"][ind:ind+1].astype(np.float)),abs(sample[parname+"err2"][ind:ind+1].astype(np.float))))
 			#values=np.random.normal(mean,err,nsamples)
 
 	#values[values<0]=0 #should be accounted for by earlier while loops
@@ -86,7 +86,7 @@ def planetparameters(sample,index, nsamples):
 
 	#planet mass
 	m, found=returnvalues(sample,"pl_bmassj",nsamples,ind=index)
-	
+
 	#if no mass is given, use the radius information to predict the mass distribution
 	if not found:
 		R, found=returnvalues(sample,"pl_radj",nsamples,ind=index)
@@ -99,9 +99,9 @@ def planetparameters(sample,index, nsamples):
 
 	#inclination
 	inc, found=returnvalues(sample,"pl_orbincl",nsamples,ind=index)
-	
+
 	#if no inclinatio is given, make something non-zero based on the planets transiting
-	if not found:		
+	if not found:
 		Rs, found=returnvalues(sample,"st_rad",nsamples,ind=index)
 		if not found:
 			Rs = np.ones(nsamples)
@@ -145,7 +145,7 @@ def eccentricities(sample,index,nsamples,ms,p1,w,p0=np.zeros(2),p2=np.zeros(2),m
 	#if a totally weird limit flag is found
 	else:
 		found=False
-	
+
 	if not found:
 
 		#cannot reference nsamples in function definition
@@ -160,13 +160,13 @@ def eccentricities(sample,index,nsamples,ms,p1,w,p0=np.zeros(2),p2=np.zeros(2),m
 
 		e=np.zeros(nsamples)
 		earth = 0.000003003
-		
+
 		#get semi-major axes
 		for x in range(0, nsamples):
 			a0 = ((p0[x]/365)**2 * ms[x])**(1./3.)
 			a1 = ((p1[x]/365)**2 * ms[x])**(1./3.)
 			a2 = ((p2[x]/365)**2 * ms[x])**(1./3.)
-			
+
 			#place where orbits would cross if the inner orbit (a0) had 0 eccentricity (if no p0 is passed, this equals 1)
 			ecrit10 = (a1-a0)/a1
 
@@ -207,7 +207,7 @@ def write_jobs(indices, system, jobs_dir, norbits, Np):
 			ics_aci_job_name=job_name[len(job_name)-15:]
 		else:
 			ics_aci_job_name=job_name
-    	
+
     	#the job names need to start with a letter
 		if ics_aci_job_name[0]=="_" or ics_aci_job_name[0].isdigit() or ics_aci_job_name[0]==".":
 			ics_aci_job_name="X"+ics_aci_job_name[1:]
@@ -267,7 +267,7 @@ def save_data(Ms, m, P, e, inc, W, w, MA, Np, n_sims, dat_dir, system):
 		orb_elements.append("inc%d"%i)
 		orb_elements.append("W%d"%i)
 		orb_elements.append("w%d"%i)
-		orb_elements.append("MA%d"%i)		
+		orb_elements.append("MA%d"%i)
 
 	#create properly formatted data frame (this could probably be done more efficiently)
 	data = []
@@ -294,7 +294,7 @@ def save_data(Ms, m, P, e, inc, W, w, MA, Np, n_sims, dat_dir, system):
 		data.index += pd.read_csv(data_file).index[-1] + 1   #start current index number at previous entry number
 		incl_header=False
 	data.to_csv(data_file, mode="a", header=incl_header)
-	
+
 	indices = list(data.index)
 
 	return indices
@@ -320,19 +320,19 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 
 		#for each planet
 		for i in range(Np):
-			
+
 			#name the systems based on which planet is removed
 			new_name=system+"_r%d"%(i+1)
 			new_jobs_dir = dir_path+"/jobs/"+new_name+"/"     #output directory for jobs
-			
+
 			#save the data and write the jobs for the new systems
 			new_indices = save_data(Ms, np.delete(m,i,0), np.delete(P,i,0), np.delete(e,i,0), np.delete(inc,i,0), np.delete(W,i,0), np.delete(W,i,0), np.delete(MA,i,0), Np-1, n_sims, dat_dir, new_name)
 			out = write_jobs(new_indices, new_name, new_jobs_dir, norbits, Np-1)
-		
+
 		print("Generated %d (%d permuted) simulations for %s"%(samps, samps*Np, samplename))
-	
+
 	else:
-		
+
 		print("Generated %d simulations for %s"%(samps,samplename))
 
 	return 1
@@ -341,13 +341,13 @@ def generate_jobs(sample,system,dat_dir,jobs_dir,dir_path,n_sims,norbits,permute
 data = pd.read_csv('planets_mod.csv', header=40)
 
 if __name__ == '__main__': #do this if the file is called directly from the console (not by another function)
-	
+
 	#number of sims created. NEEDS TO BE CHANGED EVERYTIME!
-	samps = 500
-	
+	samps = 50
+
 	#number of orbits of innermost planet. NEEDS TO BE CHANGED EVERYTIME!
 	norbits = 1e9
-	
+
 	#do you want to create systems where individual planets are removed? NEEDS TO BE CHANGED EVERYTIME!
 	perm=0
 
@@ -367,11 +367,11 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 	#systems you want to generate jobs for. NEEDS TO BE CHANGED EVERYTIME!
 	# systems = names
 	#systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
-	systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
-	# for i in ["bully ", "super earth ", "neptune ", "Ari Fake 15 ", "analog ", "3.5 planet "]:
+	# systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
+	for i in ["compact ", "hypercompact "]:
 	# # for i in ["3.5 planet "]:
-	# 	for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
-	# 		systems+=[i+j]
+		for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
+			systems+=[i+j]
 	#print(systems)
 	for samplename in systems:
 
@@ -386,10 +386,10 @@ if __name__ == '__main__': #do this if the file is called directly from the cons
 			dir_path = os.path.dirname(os.path.realpath(__file__)) #directory of this program
 			jobs_dir = dir_path+"/jobs/"+samplename+"/"     #output directory for jobs
 			dat_dir = dir_path+"/systems/"    #output directory for storing _data.csv files
-		
+
 			#generate jobs for original system
 			out = generate_jobs(sample,samplename,dat_dir,jobs_dir,dir_path,samps,norbits,permute=perm,plotstuff=plots)
-		
+
 		else:
 
 			print(samplename+" is not in the exoplanet archive file provided")

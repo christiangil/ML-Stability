@@ -38,12 +38,11 @@ permute=0
 #what systems to use. NEEDS TO BE CHANGED EVERYTIME!
 #systems = ["Ari Fake 10 0.05","Ari Fake 20 0.05","Ari Fake 30 0.05","Ari Fake 40 0.05","Ari Fake 50 0.05", "Ari Fake 10 0.1","Ari Fake 20 0.1","Ari Fake 30 0.1","Ari Fake 40 0.1","Ari Fake 50 0.1"]
 #systems = ["Rasio Fake 2 Jup 1"]
-systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
-# for i in ["bully ", "super earth ", "neptune ", "Ari Fake 15 ", "analog ", "3.5 planet "]:
-# # for i in ["bully "]:
-#     for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
-#     # for j in ["0.1"]:
-#         systems+=[i+j]
+# systems=["bully 0.045", "super earth 0.06", "neptune 0.1", "Ari Fake 15 0.09", "analog 0.04", "3.5 planet 0.02"]
+for i in ["compact ", "hypercompact "]:
+# # for i in ["3.5 planet "]:
+    for j in ["0.01", "0.02", "0.03", "0.04", "0.05", "0.075", "0.1"]:
+        systems+=[i+j]
 
 duplicate=list(systems)
 if permute:

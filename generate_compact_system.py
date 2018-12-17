@@ -70,18 +70,18 @@ Np = 4
 
 # Setting hard limits
 lowerplanetmass = 1 / 30  # Earth masses
-lowerplanetmass = 1 / 3  # Earth masses
+lowerplanetmass = 2 / 3  # Earth masses
 # lowerplanetmass=32/8 #Earth masses (1/8 of minimum system mass)
 # bullymass=12 #Earth masses
 
 # upperplanetmass=30  # Earth masses
-upperplanetmass = 3  # Earth masses
+upperplanetmass = 3 / 2  # Earth masses
 
-lowerhill = 3  # mutual hill radii
+lowerhill = 1  # mutual hill radii
 upperhill = 15  # mutual hill radii
 secondaryhill = 30  # mutual hill radii
-resonance_tolerance = 0.03  # how close to a resonance a period ratio can be
-maxpr = 10  # maximum period ratio separation
+resonance_tolerance = 0.01  # how close to a resonance a period ratio can be
+maxpr = 1.5  # maximum period ratio separation
 
 # resonances to check for
 orders = 3
